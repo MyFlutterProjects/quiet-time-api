@@ -5,6 +5,11 @@ const User = require('../model/user.model.js');
 checkDuplicateUserNameOrEmail = (req, res, next) => {
   console.log(req.body);
   // -> check if username is already in use
+  if (req.body.username == null ) {
+    res.status(400).send({ error: "Provide a username!"});
+     return
+    
+  }
   User.findOne({ username: req.body.username })
   .exec((err, user) => {
    if(err && err.kind !== 'ObjectId') {
