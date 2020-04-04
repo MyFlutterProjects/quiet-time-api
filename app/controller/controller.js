@@ -49,6 +49,8 @@ exports.signup = (req,res) => {
 exports.signin = (req, res) => {
   console.log("Sign - In");
   console.log(req.body);
+  if (req.body.username == null || req.body.password == null)
+     return res.status(400).send({ message: "Please provide a username and password!"});
 
   User.findOne({ username: req.body.username})
   .exec((err, user) => {
@@ -94,7 +96,12 @@ exports.signin = (req, res) => {
           authorities.push('ROLE_' + roles[i].name.toUpperCase());
 
         }
-        return res.status(200).send({auth: true, accessToken: token, username: user.username, authorities: authorities });
+        return res.status(200).send({ 
+          auth: true,
+          accessToken: token,
+          username: user.username,
+          firstName: user.firstName,
+          authorities: authorities });
 
       });
     }
@@ -102,8 +109,9 @@ exports.signin = (req, res) => {
 }
 
 exports.userContent = (req, res) => {
+
   User.findOne({ _id: req.userId })
-  .select('-_id -__v -password')
+  // .select('-__v -password') // exclude -> no longer needed implemented in model
   .populate('roles', '-_id -__v')
   .exec((err,user) => {
     if(err) {
@@ -121,6 +129,50 @@ exports.userContent = (req, res) => {
       "user": user
     });
   });
+}
+
+// get users 
+exports.getAllUsers = (req, res) => {
+  User.find()
+  .then(users => { 
+    res.send(users);
+  }).catch(err => { 
+    res.status(500).send({ message: err.message });
+  });
+};
+
+exports.updateUser = (req, res) => {
+  console.log('Update user');
+  if (!(req.body.firstName && req.body.lastName &&
+     req.body.username && req.body.gender && req.body.dateOfBirth
+     && req.body.residence && req.body.email)) {
+     console.log('Required data not passed');
+     return res.status(500).send({ message: "Ensure that you provide the required data for updating user information: (first name, last name, user name, gender, date of birth, email, residence)"});
+     }
+
+  const id = req.params.userId;
+  
+  User.findByIdAndUpdate(id, { 
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    username: req.body.username,
+    gender: req.body.gender,
+    dateOfBirth: req.body.dateOfBirth,
+    residence: req.body.residence,
+    email: req.body.email
+  }, {new: true})
+  .then(user => {
+    if(!user) {
+      return res.status(404).send({ message: "user not found with id " + id});
+    }
+    res.send(user);
+  }).catch(err => { 
+    if (err.kind == 'ObjectId') 
+     return res.status(404).send({ message: 'User not found '});
+  
+     return res.status(500).send({ message: "Error updating with"});
+  });
+
 }
 
 exports.adminBoard = (req, res) => {

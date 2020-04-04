@@ -2,14 +2,49 @@ const config = require('../config/config.js');
 const ROLEs = config.ROLEs;
 const User = require('../model/user.model.js');
 
-checkDuplicateUserNameOrEmail = (req, res, next) => {
+checkForAllRequiredField = (req, res, next) => { 
+  console.log('Checking required fields');
   console.log(req.body);
-  // -> check if username is already in use
-  if (req.body.username == null ) {
-    res.status(400).send({ error: "Provide a username!"});
-     return
-    
+
+  // if request body is empty
+  if (Object.keys(req.body).length == 0) {
+      console.log('User did not pass any data');
+      res.status(400).send({ error: "Please enter the required fields!"});
+      return
   }
+
+  // -> check if username is already in use
+  if (req.body.username == null ) {   
+    emptyData('Username');
+  } else if (req.body.firstName == null) {
+    emptyData('First name');
+  } else if (req.body.lastName == null) { 
+    emptyData('Last name');
+  } else if (req.body.gender == null) {
+    emptyData('Gender');
+  } else if (req.body.password == null) {
+    emptyData('Password');
+  } else if (req.body.dateOfBirth == null) {
+    emptyData('Date of birth');
+  } else if (req.body.roles == null) {
+    emptyData('Role');
+  } else if (req.body.email == null) {
+    emptyData('Email');
+  } else{
+    next();
+  }
+  
+
+  function emptyData(field) {
+    console.log(field + ' is required!');
+    return res.status(400).send({ error:  field + " is empty! "});      
+  }
+
+  // if(req.body.firstName)
+  
+}
+
+checkDuplicateUserNameOrEmail = (req, res, next) => {
   User.findOne({ username: req.body.username })
   .exec((err, user) => {
    if(err && err.kind !== 'ObjectId') {
@@ -22,7 +57,7 @@ checkDuplicateUserNameOrEmail = (req, res, next) => {
      res.status(400).send({ error: "Username is already taken!"});
      return
    }
-
+   
    // Email
    User.findOne({ email: req.body.email })
    .exec((err, user) => {
@@ -58,6 +93,7 @@ checkRoleExisted = (req, res, next) => {
 }
 
 const signUpVerify = {};
+signUpVerify.checkForAllRequiredField = checkForAllRequiredField;
 signUpVerify.checkDuplicateUserNameOrEmail = checkDuplicateUserNameOrEmail;
 signUpVerify.checkRoleExisted = checkRoleExisted;
 

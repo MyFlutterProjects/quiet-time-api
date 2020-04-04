@@ -14,7 +14,7 @@ verifyToken = (req, res, next) => {
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
-      returnres.status(500).send({
+      return res.status(500).send({
         auth: false,
         message: 'Fail to Authenticate. Error -> ' + err
       });
