@@ -36,7 +36,7 @@ exports.signup = (req,res) => {
           if (err)
           res.status(500).send({reason: err.message });
 
-          res.status(200).send({ message: "User created successfully!"});
+          res.status(201).send({ message: "User created successfully!"});
         });
       });
     }).catch(err => {
@@ -232,7 +232,7 @@ exports.createDevotion = ( req, res) => {
   });
 
   devotion.save().then(savedDevotion => {
-    res.status(200).send({ message: "Devotion created successfully!"});
+    res.status(201).send({ message: "Devotion created successfully!"});
 
   }).catch(e => {
     res.status(500).send({ message: err.message });
