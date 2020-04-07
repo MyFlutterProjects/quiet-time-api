@@ -1,12 +1,12 @@
 const mongoose = require('mongoose'), Schema = mongoose.Schema;
 
 const DevotionSchema = mongoose.Schema({
-  title: String,
-  body: String,
+  title: { type: String, required: true },
+  body: { type: String, required: true },
   username: String,
-  dateCreated:{
-     type: Date,
-     default: Date.now
-   }
+  user: [{type: Schema.ObjectId, ref: 'User'}]
+},
+{
+  timestamps: true
 });
 module.exports = mongoose.model('Devotion', DevotionSchema);

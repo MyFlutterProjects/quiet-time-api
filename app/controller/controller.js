@@ -1,7 +1,6 @@
 const config  = require('../config/config.js');
 const Role = require('../model/role.model.js');
 const User = require('../model/user.model.js');
-const Devotion = require('../model/devotion.model.js');
 
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
@@ -98,6 +97,7 @@ exports.signin = (req, res) => {
         }
         return res.status(200).send({ 
           auth: true,
+          id:user._id,
           accessToken: token,
           username: user.username,
           firstName: user.firstName,
@@ -223,30 +223,3 @@ exports.managementBoard = (req, res) => {
   });
 }
 
-exports.createDevotion = ( req, res) => {
-  console.log('Processing func -> create devotion');
-  const  devotion = Devotion({
-    title: req.body.title,
-    body: req.body.body,
-
-  });
-
-  devotion.save().then(savedDevotion => {
-    res.status(201).send({ message: "Devotion created successfully!"});
-
-  }).catch(e => {
-    res.status(500).send({ message: err.message });
-  })
-
-}
-
-exports.getDevotions = (req, res) => {
-  Devotion.find()
-  .then(devotions => {
-    res.send(devotions);
-  }).catch(err => {
-    res.status(500).send({ 
-      message: err.message
-    });
-  });
-};

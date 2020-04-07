@@ -20,9 +20,5 @@ module.exports = function(app) {
   // update user details
   app.put('/api/user/:userId', [authJwt.verifyToken], controller.updateUser);
 
-  // devotion 
-  app.post('/api/devotion', [authJwt.verifyToken], controller.createDevotion);
-
-  app.get('/api/devotion', [authJwt.verifyToken], controller.getDevotions);
 
 }

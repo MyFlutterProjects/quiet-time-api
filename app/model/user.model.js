@@ -5,25 +5,20 @@
    const UserSchema = mongoose.Schema({
      firstName: String,
      lastName: String,
-     username: String,
+     username:{type: String, required: true },
      dateOfBirth: Date,
      gender: String,
      email: String,
      residence: String,
      registeredFrom: String, // location
      password: String,
-     active: {
-       type: Boolean,
-       default: true
-     },
-     roles: [{
-       type: Schema.Types.ObjectId,
-       ref: 'Role'
-     }],
-     dateCreated: {
-       type: Date,
-       default: Date.now
-     }
+     active: { type: Boolean,default: true},
+     roles: [{ type: Schema.Types.ObjectId, ref: 'Role'}],
+    //  devotions: [{ type: Schema.Types.ObjectId, ref: 'Devotion' }],
+
+   },
+   {
+     timestamps: true
    });
 
 

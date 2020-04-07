@@ -10,6 +10,8 @@ app.use(cors());
 
 
 require('./app/router/router.js')(app);
+require('./app/router/devotion.route.js')(app);
+// require('./app/controller/devotion.controller.js')(app);
 const Role = require('./app/model/role.model.js');
 
 //configuring the databse
